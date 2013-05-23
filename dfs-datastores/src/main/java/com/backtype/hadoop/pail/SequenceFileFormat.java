@@ -56,8 +56,8 @@ public class SequenceFileFormat implements PailFormat {
 
     public SequenceFileFormat(Map<String, Object> args) {
         args = new KeywordArgParser()
-                .add(TYPE_ARG, null, true, TYPE_ARG_RECORD, TYPE_ARG_BLOCK)
-                .add(CODEC_ARG, CODEC_ARG_DEFAULT, false, CODEC_ARG_DEFAULT, CODEC_ARG_GZIP, CODEC_ARG_BZIP2)
+                .add(TYPE_ARG, null, true, (Object[])TYPES.keySet().toArray(new String[TYPES.size()]))
+                .add(CODEC_ARG, CODEC_ARG_DEFAULT, false, (Object[])CODECS.keySet().toArray(new String[CODECS.size()]))
                 .parse(args);
         _typeArg = (String) args.get(TYPE_ARG);
         _codecArg = (String) args.get(CODEC_ARG);
@@ -81,6 +81,11 @@ public class SequenceFileFormat implements PailFormat {
         return SequenceFilePailInputFormat.class;
     }
 
+    public static void addCompressionCodec(String identifier, CompressionCodec codec) {
+        if(!CODECS.containsKey(identifier)) {
+            CODECS.put(identifier, codec);
+        }
+    }
 
     public static class SequenceFilePailRecordReader implements RecordReader<Text, BytesWritable> {
         private static Logger LOG = LoggerFactory.getLogger(SequenceFilePailRecordReader.class);
